@@ -1,19 +1,11 @@
 from collections import defaultdict, OrderedDict
 from typing import List, Set, Dict
-
+from strictdoc.backend.sdoc.models.requirement import RequirementFieldName, RequirementFieldType, \
+    RESERVED_NON_META_FIELDS
 from strictdoc.backend.sdoc.models.type_system import (
-    GrammarElementField,
-    GrammarElementFieldString,
+    GrammarElementField, GrammarElementFieldString, GrammarElementFieldTag, GrammarElementFieldTypeValue,
+    GrammarReferenceType,
 )
-
-RESERVED_NON_META_FIELDS = [
-    "REFS",
-    "TITLE",
-    "STATEMENT",
-    "COMMENT",
-    "RATIONALE",
-    "LEVEL",
-]
 
 
 class GrammarElement:
@@ -28,7 +20,7 @@ class GrammarElement:
 
     def enumerate_meta_field_titles(self):
         for field in self.fields:
-            if field.title in ("TITLE", "STATEMENT"):
+            if field.title in (RequirementFieldName.TITLE, RequirementFieldName.STATEMENT):
                 break
             if field.title in RESERVED_NON_META_FIELDS:
                 continue
@@ -37,7 +29,7 @@ class GrammarElement:
     def enumerate_custom_content_field_titles(self):
         after_title_or_statement = False
         for field in self.fields:
-            if field.title in ("TITLE", "STATEMENT"):
+            if field.title in (RequirementFieldName.TITLE, RequirementFieldName.STATEMENT):
                 after_title_or_statement = True
             if field.title in RESERVED_NON_META_FIELDS:
                 continue
@@ -71,42 +63,58 @@ class DocumentGrammar:
     def create_default(parent):
         fields = [
             GrammarElementFieldString(
-                parent=None, title="UID", required="False"
+                parent=None,
+                title=RequirementFieldName.UID,
+                type= RequirementFieldType.STRING,
+                required="False"
             ),
             GrammarElementFieldString(
                 parent=None,
-                title="LEVEL",
+                title=RequirementFieldName.LEVEL,
+                type= RequirementFieldType.STRING,
                 required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
-                title="STATUS",
+                title=RequirementFieldName.STATUS,
+                type= RequirementFieldType.STRING,
                 required="False",
             ),
-            GrammarElementFieldString(
-                parent=None, title="TAGS", required="False"
+            GrammarElementFieldTag(
+                parent=None,
+                title=RequirementFieldName.TAGS,
+                type = RequirementFieldType.TAG,
+                required="False"
             ),
-            GrammarElementFieldString(
-                parent=None, title="REFS", required="False"
+            GrammarElementFieldTypeValue(
+                parent=None,
+                title=RequirementFieldName.REFS,
+                type = RequirementFieldType.TYPE_VALUE,
+                types = [GrammarReferenceType.PARENT_REQ_REFERENCE, GrammarReferenceType.FILE_REFERENCE, GrammarReferenceType.EXTERNAL_REFERENCE],
+                required="False"
             ),
             GrammarElementFieldString(
                 parent=None,
-                title="TITLE",
+                title=RequirementFieldName.TITLE,
+                type= RequirementFieldType.STRING,
                 required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
-                title="STATEMENT",
+                title=RequirementFieldName.STATEMENT,
+                type= RequirementFieldType.STRING,
                 required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
-                title="RATIONALE",
+                title=RequirementFieldName.RATIONALE,
+                type= RequirementFieldType.STRING,
                 required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
-                title="COMMENT",
+                title=RequirementFieldName.COMMENT,
+                type= RequirementFieldType.STRING,
                 required="False",
             ),
         ]

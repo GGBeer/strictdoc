@@ -11,6 +11,7 @@ from strictdoc.backend.sdoc.models.reference import (
     Reference,
     ParentReqReference,
     FileReference,
+    ExternalReference,
 )
 from strictdoc.backend.sdoc.models.requirement import (
     RequirementComment,
@@ -24,6 +25,7 @@ from strictdoc.backend.sdoc.models.type_system import (
     GrammarElementFieldSingleChoice,
     GrammarElementFieldMultipleChoice,
     GrammarElementFieldTag,
+    GrammarElementFieldTypeValue,
 )
 
 SECTION_MODELS = [
@@ -36,6 +38,7 @@ SECTION_MODELS = [
     Reference,
     ParentReqReference,
     FileReference,
+    ExternalReference,
     FreeText,
     InlineLink,
 ]
@@ -49,6 +52,7 @@ DOCUMENT_MODELS = [
     GrammarElementFieldSingleChoice,
     GrammarElementFieldMultipleChoice,
     GrammarElementFieldTag,
+    GrammarElementFieldTypeValue,
 ]
 DOCUMENT_MODELS.extend(SECTION_MODELS)
 

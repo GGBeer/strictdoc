@@ -33,7 +33,7 @@ ELEMENTS:
     TYPE: String
     REQUIRED: False
   - TITLE: REFS
-    TYPE: String
+    TYPE: TypeValue(ParentReqReference, FileReference, ExternalReference)
     REQUIRED: False
   - TITLE: TITLE
     TYPE: String

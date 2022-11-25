@@ -1,5 +1,18 @@
 import os
 
+from strictdoc.backend.sdoc.models.type_system import GrammarReferenceType
+
+
+class ReferenceType:
+    PARENT = "Parent"
+    FILE = "File"
+    EXTERNAL = "External"
+
+    GRAMMAR_REFERENCE_TYPE_MAP = {
+        PARENT : GrammarReferenceType.PARENT_REQ_REFERENCE,
+        FILE : GrammarReferenceType.FILE_REFERENCE,
+        EXTERNAL : GrammarReferenceType.EXTERNAL_REFERENCE,
+    }
 
 class Reference:
     def __init__(self, parent, ref_type, path):
@@ -26,4 +39,9 @@ class FileReference(Reference):
 
 
 class ParentReqReference(Reference):
-    pass
+    def __init__(self, parent, ref_type, path):
+        super().__init__(parent, ref_type, path)
+
+class ExternalReference(Reference):
+    def __init__(self, parent, ref_type, path):
+        super().__init__(parent, ref_type, path)

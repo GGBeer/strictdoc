@@ -5,7 +5,7 @@ from strictdoc.backend.sdoc.models.document_config import DocumentConfig
 from strictdoc.backend.sdoc.models.inline_link import InlineLink
 from strictdoc.backend.sdoc.models.requirement import (
     Requirement,
-    CompositeRequirement,
+    CompositeRequirement, RequirementFieldType,
 )
 from strictdoc.backend.sdoc.models.section import Section, FreeText
 from strictdoc.backend.sdoc.models.type_system import (
@@ -13,6 +13,7 @@ from strictdoc.backend.sdoc.models.type_system import (
     GrammarElementFieldSingleChoice,
     GrammarElementFieldMultipleChoice,
     GrammarElementFieldTag,
+    GrammarElementFieldTypeValue,
 )
 from strictdoc.core.document_iterator import DocumentCachingIterator
 
@@ -239,17 +240,24 @@ class SDWriter:
         output += "    TYPE: "
 
         if isinstance(grammar_field, GrammarElementFieldString):
-            output += "String"
+            output += RequirementFieldType.STRING
         elif isinstance(grammar_field, GrammarElementFieldSingleChoice):
-            output += "SingleChoice("
+            output += RequirementFieldType.SINGLE_CHOICE
+            output += "("
             output += ", ".join(grammar_field.options)
             output += ")"
         elif isinstance(grammar_field, GrammarElementFieldMultipleChoice):
-            output += "MultipleChoice("
+            output += RequirementFieldType.MULTIPLE_CHOICE
+            output += "("
             output += ", ".join(grammar_field.options)
             output += ")"
         elif isinstance(grammar_field, GrammarElementFieldTag):
-            output += "Tag"
+            output += RequirementFieldType.TAG
+        elif isinstance(grammar_field, GrammarElementFieldTypeValue):
+            output += RequirementFieldType.TYPE_VALUE
+            output += "("
+            output += ", ".join(grammar_field.types)
+            output += ")"
         else:
             raise NotImplementedError from None
 

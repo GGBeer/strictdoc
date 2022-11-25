@@ -156,6 +156,19 @@
         </ul>
       {%- endif %}
 
+      {%- if requirement.has_requirement_references("External") %}
+      External:
+      <ul class="requirement_link">
+        {%- for external_ref in requirement.get_requirement_references("External") %}
+        <li>
+          <span class="requirement_link-external">
+            {{ external_ref.path if external_ref.path else "" }}
+          </span>
+        </li>
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+
       {%- if config.experimental_enable_file_traceability -%}
       {%- set requirement_file_links = traceability_index.get_requirement_file_links(requirement) %}
       {%- if requirement_file_links %}

@@ -9,6 +9,7 @@ from strictdoc.backend.sdoc.models.document_grammar import (
     GrammarElementField,
     GrammarElement,
 )
+from strictdoc.backend.sdoc.models.reference import ReferenceType
 from strictdoc.backend.sdoc.models.requirement import (
     Requirement,
     RequirementField,
@@ -17,6 +18,7 @@ from strictdoc.backend.sdoc.models.type_system import (
     GrammarElementFieldSingleChoice,
     GrammarElementFieldMultipleChoice,
     GrammarElementFieldTag,
+    GrammarElementFieldTypeValue,
 )
 
 
@@ -158,4 +160,17 @@ def validate_requirement_field(
                 requirement_field=requirement_field,
                 **get_location(requirement),
             )
+    elif isinstance(grammar_field, GrammarElementFieldTypeValue):
+        requirement_field_value_references = requirement_field.field_value_references
+        for reference in requirement_field_value_references:
+            if reference.ref_type not in ReferenceType.GRAMMAR_REFERENCE_TYPE_MAP.keys() \
+                    or ReferenceType.GRAMMAR_REFERENCE_TYPE_MAP[reference.ref_type] not in grammar_field.types:
+                raise StrictDocSemanticError.invalid_type_value_reference_item(
+                    requirement=requirement,
+                    document_grammar=document_grammar,
+                    requirement_field=requirement_field,
+                    reference_item = reference,
+                    **get_location(requirement),
+                )
+
     return True

@@ -84,6 +84,25 @@ data-status='{{ requirement.status.lower() }}'
     </tr>
     {%- endif %}
 
+    {%- if requirement.has_requirement_references("External") %}
+    <tr>
+      <th>
+        external&nbsp;refs:
+      </th>
+      <td>
+        <ul class="requirement_link">
+          {%- for external_ref in requirement.get_requirement_references("External") %}
+          <li>
+            <span class="requirement_link-external">
+              {{ external_ref.path if external_ref.path else "" }}
+            </span>
+          </li>
+          {%- endfor %}
+        </ul>
+      </td>
+    </tr>
+    {%- endif %}
+
     {# {% include "_shared/requirement_block/files_list.jinja.html" %} #}
     {%- if config.experimental_enable_file_traceability -%}
     {%- set requirement_file_links = traceability_index.get_requirement_file_links(requirement) %}

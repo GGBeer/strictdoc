@@ -23,7 +23,7 @@ MultiLineString[noskipws]:
 
 Reference[noskipws]:
   // FileReference is an early, experimental feature. Do not use yet.
-  ParentReqReference | FileReference
+  ParentReqReference | FileReference | ExternalReference
 ;
 
 ParentReqReference[noskipws]:
@@ -34,6 +34,11 @@ ParentReqReference[noskipws]:
 FileReference[noskipws]:
   // FileReference is an early, experimental feature. Do not use yet.
   '- TYPE: ' ref_type = 'File' '\n'
+  '  VALUE: ' path = /.*$/ '\n'
+;
+
+ExternalReference[noskipws]:
+  '- TYPE: ' ref_type = 'External' '\n'
   '  VALUE: ' path = /.*$/ '\n'
 ;
 """

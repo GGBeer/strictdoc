@@ -29,37 +29,53 @@ GrammarElementField[noskipws]:
   GrammarElementFieldString |
   GrammarElementFieldSingleChoice |
   GrammarElementFieldMultipleChoice |
-  GrammarElementFieldTag
+  GrammarElementFieldTag |
+  GrammarElementFieldTypeValue
 ;
 
 GrammarElementFieldString[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: String' '\n'
+  '    TYPE: ' type = 'String' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;
 
 GrammarElementFieldSingleChoice[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: SingleChoice'
+  '    TYPE: ' type = 'SingleChoice'
     '(' ((options = ChoiceOption) (options *= ChoiceOptionXs)) ')' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;
 
 GrammarElementFieldMultipleChoice[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: MultipleChoice'
+  '    TYPE: ' type = 'MultipleChoice'
     '(' ((options = ChoiceOption) (options *= ChoiceOptionXs)) ')' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;
 
 GrammarElementFieldTag[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: Tag' '\n'
+  '    TYPE: ' type = 'Tag' '\n'
+  '    REQUIRED: ' (required = BooleanChoice) '\n'
+;
+
+GrammarElementFieldTypeValue[noskipws]:
+  '  - TITLE: ' title=FieldName '\n'
+  '    TYPE: ' type = 'TypeValue'
+    '(' ((types = RefTypeValue) (types *= RefTypeValueXs)) ')' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;
 
 BooleanChoice[noskipws]:
   ('True' | 'False')
+;
+
+RefTypeValue[noskipws]:
+  ('ParentReqReference' | 'FileReference' | 'ExternalReference')
+;
+
+RefTypeValueXs[noskipws]:
+  /, /- RefTypeValue
 ;
 
 DocumentConfig[noskipws]:

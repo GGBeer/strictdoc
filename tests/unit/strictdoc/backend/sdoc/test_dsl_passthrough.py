@@ -1,4 +1,5 @@
 from strictdoc.backend.sdoc.models.document import Document
+from strictdoc.backend.sdoc.models.reference import ReferenceType
 from strictdoc.backend.sdoc.models.requirement import (
     Requirement,
     CompositeRequirement,
@@ -565,7 +566,7 @@ REFS:
     document: Document = reader.read(input_sdoc)
     requirement = document.section_contents[0]
     assert len(requirement.references) == 1
-    assert requirement.references[0].ref_type == "File"
+    assert requirement.references[0].ref_type ==  ReferenceType.FILE
     assert requirement.references[0].path == "/tmp/sample.cpp"
 
     writer = SDWriter()
