@@ -99,7 +99,9 @@ class RSTWriter:
             output += comment.get_comment()
             output += "\n\n"
 
-        requirement_references = section_content.get_requirement_references(ReferenceType.PARENT)
+        requirement_references = section_content.get_requirement_references(
+            ReferenceType.PARENT
+        )
         if len(requirement_references) > 0:
             output += "**Parents:**"
             output += "\n\n"

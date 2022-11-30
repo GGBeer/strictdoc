@@ -1,40 +1,15 @@
 from collections import OrderedDict
 from typing import Optional, List
 
+from strictdoc.backend.sdoc.document_reference import DocumentReference
 from strictdoc.backend.sdoc.models.node import Node
 from strictdoc.backend.sdoc.models.reference import Reference
+from strictdoc.backend.sdoc.models.type_system import (
+    RequirementFieldName,
+    RESERVED_NON_META_FIELDS,
+)
 
 MULTILINE_WORD_THRESHOLD = 6
-
-
-class RequirementFieldName:
-    UID = "UID"
-    LEVEL = "LEVEL"
-    STATUS = "STATUS"
-    TAGS = "TAGS"
-    REFS = "REFS"
-    TITLE = "TITLE"
-    STATEMENT = "STATEMENT"
-    RATIONALE = "RATIONALE"
-    COMMENT = "COMMENT"
-
-
-RESERVED_NON_META_FIELDS = [
-    RequirementFieldName.REFS,
-    RequirementFieldName.TITLE,
-    RequirementFieldName.STATEMENT,
-    RequirementFieldName.COMMENT,
-    RequirementFieldName.RATIONALE,
-    RequirementFieldName.LEVEL,
-]
-
-
-class RequirementFieldType:
-    STRING = "String"
-    SINGLE_CHOICE = "SingleChoice"
-    MULTIPLE_CHOICE = "MultipleChoice"
-    TAG = "Tag"
-    TYPE_VALUE = "TypeValue"
 
 
 class RequirementContext:
@@ -113,18 +88,27 @@ class Requirement(Node):  # pylint: disable=too-many-instance-attributes
         if RequirementFieldName.UID in ordered_fields_lookup:
             uid = ordered_fields_lookup[RequirementFieldName.UID][0].field_value
         if RequirementFieldName.LEVEL in ordered_fields_lookup:
-            level = ordered_fields_lookup[RequirementFieldName.LEVEL][0].field_value
+            level = ordered_fields_lookup[RequirementFieldName.LEVEL][
+                0
+            ].field_value
         if RequirementFieldName.STATUS in ordered_fields_lookup:
-            status = ordered_fields_lookup[RequirementFieldName.STATUS][0].field_value
+            status = ordered_fields_lookup[RequirementFieldName.STATUS][
+                0
+            ].field_value
         if RequirementFieldName.TAGS in ordered_fields_lookup:
-            tags = ordered_fields_lookup[RequirementFieldName.TAGS][0].field_value.split(", ")
+            tags = ordered_fields_lookup[RequirementFieldName.TAGS][
+                0
+            ].field_value.split(", ")
         if RequirementFieldName.REFS in ordered_fields_lookup:
-            references_opt: Optional[List[Reference]] = ordered_fields_lookup[RequirementFieldName.REFS
+            references_opt: Optional[List[Reference]] = ordered_fields_lookup[
+                RequirementFieldName.REFS
             ][0].field_value_references
             assert references_opt is not None
             references = references_opt
         if RequirementFieldName.TITLE in ordered_fields_lookup:
-            title = ordered_fields_lookup[RequirementFieldName.TITLE][0].field_value
+            title = ordered_fields_lookup[RequirementFieldName.TITLE][
+                0
+            ].field_value
         if RequirementFieldName.STATEMENT in ordered_fields_lookup:
             field = ordered_fields_lookup[RequirementFieldName.STATEMENT][0]
             if field.field_value_multiline:
@@ -138,7 +122,9 @@ class Requirement(Node):  # pylint: disable=too-many-instance-attributes
             else:
                 rationale = field.field_value
         if RequirementFieldName.COMMENT in ordered_fields_lookup:
-            for comment_field in ordered_fields_lookup[RequirementFieldName.COMMENT]:
+            for comment_field in ordered_fields_lookup[
+                RequirementFieldName.COMMENT
+            ]:
                 field = comment_field
                 if field.field_value_multiline:
                     comments.append(
@@ -193,7 +179,6 @@ class Requirement(Node):  # pylint: disable=too-many-instance-attributes
             str, List[RequirementField]
         ] = ordered_fields_lookup
         self.ng_level: Optional[int] = None
-        from strictdoc.backend.sdoc.document_reference import DocumentReference
         self.ng_document_reference: Optional[DocumentReference] = None
         self.context = RequirementContext()
 
@@ -243,7 +228,7 @@ class Requirement(Node):  # pylint: disable=too-many-instance-attributes
         return references
 
     def has_requirement_references(self, ref_type):
-        return len(self.get_requirement_references(ref_type))>0
+        return len(self.get_requirement_references(ref_type)) > 0
 
     def get_statement_single_or_multiline(self):
         if self.statement:
@@ -260,7 +245,9 @@ class Requirement(Node):  # pylint: disable=too-many-instance-attributes
         return None
 
     def append_to_multiline_statement(self, new_statement):
-        statement_field = self.ordered_fields_lookup[RequirementFieldName.STATEMENT][0]
+        statement_field = self.ordered_fields_lookup[
+            RequirementFieldName.STATEMENT
+        ][0]
         statement_field.field_value_multiline += new_statement.rstrip()
         self.statement_multiline = statement_field.field_value_multiline
 
@@ -324,7 +311,6 @@ class Requirement(Node):  # pylint: disable=too-many-instance-attributes
 class CompositeRequirement(Requirement):
     def __init__(self, parent, **fields):
         super().__init__(parent, **fields)
-        from strictdoc.backend.sdoc.document_reference import DocumentReference
         self.ng_document_reference: Optional[DocumentReference] = None
         self.ng_has_requirements = False
 

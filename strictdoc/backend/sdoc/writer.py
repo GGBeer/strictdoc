@@ -5,7 +5,7 @@ from strictdoc.backend.sdoc.models.document_config import DocumentConfig
 from strictdoc.backend.sdoc.models.inline_link import InlineLink
 from strictdoc.backend.sdoc.models.requirement import (
     Requirement,
-    CompositeRequirement, RequirementFieldType,
+    CompositeRequirement,
 )
 from strictdoc.backend.sdoc.models.section import Section, FreeText
 from strictdoc.backend.sdoc.models.type_system import (
@@ -13,6 +13,7 @@ from strictdoc.backend.sdoc.models.type_system import (
     GrammarElementFieldSingleChoice,
     GrammarElementFieldMultipleChoice,
     GrammarElementFieldTag,
+    RequirementFieldType,
     GrammarElementFieldTypeValue,
 )
 from strictdoc.core.document_iterator import DocumentCachingIterator

@@ -1,10 +1,13 @@
 from collections import defaultdict, OrderedDict
 from typing import List, Set, Dict
-from strictdoc.backend.sdoc.models.requirement import RequirementFieldName, RequirementFieldType, \
-    RESERVED_NON_META_FIELDS
 from strictdoc.backend.sdoc.models.type_system import (
-    GrammarElementField, GrammarElementFieldString, GrammarElementFieldTag, GrammarElementFieldTypeValue,
+    GrammarElementField,
+    GrammarElementFieldString,
+    GrammarElementFieldTypeValue,
     GrammarReferenceType,
+    RequirementFieldName,
+    RESERVED_NON_META_FIELDS,
+    RequirementFieldType,
 )
 
 
@@ -20,7 +23,10 @@ class GrammarElement:
 
     def enumerate_meta_field_titles(self):
         for field in self.fields:
-            if field.title in (RequirementFieldName.TITLE, RequirementFieldName.STATEMENT):
+            if field.title in (
+                RequirementFieldName.TITLE,
+                RequirementFieldName.STATEMENT,
+            ):
                 break
             if field.title in RESERVED_NON_META_FIELDS:
                 continue
@@ -29,7 +35,10 @@ class GrammarElement:
     def enumerate_custom_content_field_titles(self):
         after_title_or_statement = False
         for field in self.fields:
-            if field.title in (RequirementFieldName.TITLE, RequirementFieldName.STATEMENT):
+            if field.title in (
+                RequirementFieldName.TITLE,
+                RequirementFieldName.STATEMENT,
+            ):
                 after_title_or_statement = True
             if field.title in RESERVED_NON_META_FIELDS:
                 continue
@@ -65,56 +74,61 @@ class DocumentGrammar:
             GrammarElementFieldString(
                 parent=None,
                 title=RequirementFieldName.UID,
-                type= RequirementFieldType.STRING,
-                required="False"
+                gef_type=RequirementFieldType.STRING,
+                required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
                 title=RequirementFieldName.LEVEL,
-                type= RequirementFieldType.STRING,
+                gef_type=RequirementFieldType.STRING,
                 required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
                 title=RequirementFieldName.STATUS,
-                type= RequirementFieldType.STRING,
+                gef_type=RequirementFieldType.STRING,
                 required="False",
             ),
-            GrammarElementFieldTag(
+            GrammarElementFieldString(
+                # TODO GrammarElementFieldString => GrammarElementFieldTag
                 parent=None,
                 title=RequirementFieldName.TAGS,
-                type = RequirementFieldType.TAG,
-                required="False"
+                gef_type=RequirementFieldType.TAG,
+                required="False",
             ),
             GrammarElementFieldTypeValue(
                 parent=None,
                 title=RequirementFieldName.REFS,
-                type = RequirementFieldType.TYPE_VALUE,
-                types = [GrammarReferenceType.PARENT_REQ_REFERENCE, GrammarReferenceType.FILE_REFERENCE, GrammarReferenceType.EXTERNAL_REFERENCE],
-                required="False"
+                gef_type=RequirementFieldType.TYPE_VALUE,
+                types=[
+                    GrammarReferenceType.PARENT_REQ_REFERENCE,
+                    GrammarReferenceType.FILE_REFERENCE,
+                    GrammarReferenceType.EXTERNAL_REFERENCE,
+                ],
+                required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
                 title=RequirementFieldName.TITLE,
-                type= RequirementFieldType.STRING,
+                gef_type=RequirementFieldType.STRING,
                 required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
                 title=RequirementFieldName.STATEMENT,
-                type= RequirementFieldType.STRING,
+                gef_type=RequirementFieldType.STRING,
                 required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
                 title=RequirementFieldName.RATIONALE,
-                type= RequirementFieldType.STRING,
+                gef_type=RequirementFieldType.STRING,
                 required="False",
             ),
             GrammarElementFieldString(
                 parent=None,
                 title=RequirementFieldName.COMMENT,
-                type= RequirementFieldType.STRING,
+                gef_type=RequirementFieldType.STRING,
                 required="False",
             ),
         ]

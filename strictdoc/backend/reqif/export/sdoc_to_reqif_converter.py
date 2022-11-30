@@ -35,13 +35,16 @@ from strictdoc.backend.reqif.sdoc_reqif_fields import (
 )
 from strictdoc.backend.sdoc.models.document import Document
 from strictdoc.backend.sdoc.models.document_grammar import DocumentGrammar
-from strictdoc.backend.sdoc.models.reference import ReferenceType
-from strictdoc.backend.sdoc.models.requirement import Requirement, RequirementFieldName
+from strictdoc.backend.sdoc.models.requirement import (
+    Requirement,
+)
 from strictdoc.backend.sdoc.models.type_system import (
     GrammarElementFieldString,
     GrammarElementFieldSingleChoice,
     GrammarElementField,
     GrammarElementFieldMultipleChoice,
+    RequirementFieldName,
+    ReferenceType,
 )
 from strictdoc.backend.sdoc.writer import SDWriter
 from strictdoc.core.document_iterator import DocumentCachingIterator

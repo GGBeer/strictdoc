@@ -28,6 +28,7 @@ from strictdoc.backend.sdoc.models.type_system import (
     GrammarElementFieldString,
     GrammarElementFieldSingleChoice,
     GrammarElementFieldMultipleChoice,
+    RequirementFieldType,
 )
 
 
@@ -81,6 +82,7 @@ class ReqIFToSDocConverter:
                             GrammarElementFieldString(
                                 parent=None,
                                 title=field_name,
+                                gef_type=RequirementFieldType.STRING,
                                 required="False",
                             )
                         )
@@ -92,6 +94,7 @@ class ReqIFToSDocConverter:
                             GrammarElementFieldString(
                                 parent=None,
                                 title=field_name,
+                                gef_type=RequirementFieldType.STRING,
                                 required="False",
                             )
                         )
@@ -112,6 +115,7 @@ class ReqIFToSDocConverter:
                                 GrammarElementFieldMultipleChoice(
                                     parent=None,
                                     title=field_name,
+                                    gef_type=RequirementFieldType.MULTIPLE_CHOICE,  # noqa: E501
                                     options=options,
                                     required="False",
                                 )
@@ -121,6 +125,7 @@ class ReqIFToSDocConverter:
                                 GrammarElementFieldSingleChoice(
                                     parent=None,
                                     title=field_name,
+                                    gef_type=RequirementFieldType.SINGLE_CHOICE,
                                     options=options,
                                     required="False",
                                 )

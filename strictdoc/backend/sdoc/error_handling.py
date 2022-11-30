@@ -248,7 +248,8 @@ class StrictDocSemanticError(Exception):
     ):
         return StrictDocSemanticError(
             title=(
-                f"Requirement field of type TypeValue has an unsupported Reference item: "
+                f"Requirement field of type TypeValue has an unsupported "
+                f"Reference item: "
                 f"{reference_item}"
             ),
             hint=(

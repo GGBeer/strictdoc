@@ -15,7 +15,10 @@ from strictdoc.backend.sdoc.models.requirement import (
     RequirementField,
     Requirement,
 )
-from strictdoc.backend.sdoc.models.type_system import GrammarElementFieldString
+from strictdoc.backend.sdoc.models.type_system import (
+    GrammarElementFieldString,
+    RequirementFieldType,
+)
 
 
 class RequirementColumns(NamedTuple):
@@ -142,7 +145,10 @@ class ExcelToSDocConverter:
             fields.extend(
                 [
                     GrammarElementFieldString(
-                        parent=None, title=name, required="False"
+                        parent=None,
+                        title=name,
+                        gef_type=RequirementFieldType.STRING,
+                        required="False",
                     ),
                 ]
             )

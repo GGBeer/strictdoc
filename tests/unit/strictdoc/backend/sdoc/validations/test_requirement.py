@@ -9,7 +9,10 @@ from strictdoc.backend.sdoc.models.requirement import (
     Requirement,
     RequirementField,
 )
-from strictdoc.backend.sdoc.models.type_system import GrammarElementFieldString
+from strictdoc.backend.sdoc.models.type_system import (
+    GrammarElementFieldString,
+    RequirementFieldType,
+)
 from strictdoc.backend.sdoc.validations.requirement import (
     multi_choice_regex_match,
 )
@@ -45,7 +48,10 @@ def test_04_meta_multilines_not_nones():
     fields.extend(
         [
             GrammarElementFieldString(
-                parent=None, title=test_field, required="False"
+                parent=None,
+                title=test_field,
+                gef_type=RequirementFieldType.STRING,
+                required="False",
             ),
         ]
     )

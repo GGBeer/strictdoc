@@ -1,5 +1,5 @@
 from strictdoc.backend.sdoc.models.object_factory import SDocObjectFactory
-from strictdoc.backend.sdoc.models.requirement import RequirementFieldName
+from strictdoc.backend.sdoc.models.type_system import RequirementFieldName
 
 
 def test_010_full_dict():
@@ -17,8 +17,14 @@ def test_010_full_dict():
     assert requirement.ng_level == 1
     assert requirement.uid == requirement_dict[RequirementFieldName.UID]
     assert requirement.title == requirement_dict[RequirementFieldName.TITLE]
-    assert requirement.statement_multiline == requirement_dict[RequirementFieldName.STATEMENT]
-    assert requirement.rationale_multiline == requirement_dict[RequirementFieldName.RATIONALE]
+    assert (
+        requirement.statement_multiline
+        == requirement_dict[RequirementFieldName.STATEMENT]
+    )
+    assert (
+        requirement.rationale_multiline
+        == requirement_dict[RequirementFieldName.RATIONALE]
+    )
 
 
 def test_020_empty_dict():

@@ -34,33 +34,33 @@ GrammarElementField[noskipws]:
 
 GrammarElementFieldString[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: ' type = 'String' '\n'
+  '    TYPE: ' gef_type = 'String' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;
 
 GrammarElementFieldSingleChoice[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: ' type = 'SingleChoice'
+  '    TYPE: ' gef_type = 'SingleChoice'
     '(' ((options = ChoiceOption) (options *= ChoiceOptionXs)) ')' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;
 
 GrammarElementFieldMultipleChoice[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: ' type = 'MultipleChoice'
+  '    TYPE: ' gef_type = 'MultipleChoice'
     '(' ((options = ChoiceOption) (options *= ChoiceOptionXs)) ')' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;
 
 GrammarElementFieldTag[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: ' type = 'Tag' '\n'
+  '    TYPE: ' gef_type = 'Tag' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;
 
 GrammarElementFieldTypeValue[noskipws]:
   '  - TITLE: ' title=FieldName '\n'
-  '    TYPE: ' type = 'TypeValue'
+  '    TYPE: ' gef_type = 'TypeValue'
     '(' ((types = RefTypeValue) (types *= RefTypeValueXs)) ')' '\n'
   '    REQUIRED: ' (required = BooleanChoice) '\n'
 ;

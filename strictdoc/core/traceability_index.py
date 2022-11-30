@@ -78,7 +78,9 @@ class TraceabilityIndex:  # pylint: disable=too-many-public-methods, too-many-in
         if not self.requirements_parents:
             return []
 
-        children_requirements = self.requirements_parents[requirement.uid]["children"]
+        children_requirements = self.requirements_parents[requirement.uid][
+            "children"
+        ]
         return children_requirements
 
     def get_link(self, requirement):

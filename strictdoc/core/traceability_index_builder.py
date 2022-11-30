@@ -5,7 +5,7 @@ from typing import List, Iterator, Optional
 
 from strictdoc.backend.sdoc.models.document import Document
 from strictdoc.backend.sdoc.models.inline_link import InlineLink
-from strictdoc.backend.sdoc.models.reference import ReferenceType
+from strictdoc.backend.sdoc.models.type_system import ReferenceType
 from strictdoc.backend.sdoc.models.requirement import Requirement
 from strictdoc.backend.source_file_syntax.reader import (
     SourceFileTraceabilityReader,
@@ -232,7 +232,7 @@ class TraceabilityIndexBuilder:
                     if ref.ref_type == ReferenceType.FILE:
                         d_07_file_traceability_index.register(requirement)
                         continue
-                    if ref.ref_type !=  ReferenceType.PARENT:
+                    if ref.ref_type != ReferenceType.PARENT:
                         continue
                     d_02_requirements_map[requirement.uid][
                         "parents_uids"

@@ -3,8 +3,9 @@ from typing import Optional, List
 from strictdoc.backend.sdoc.models.document import Document
 from strictdoc.backend.sdoc.models.requirement import (
     Requirement,
-    RequirementField, RequirementFieldName,
+    RequirementField,
 )
+from strictdoc.backend.sdoc.models.type_system import RequirementFieldName
 
 
 class SDocObjectFactory:
@@ -157,13 +158,17 @@ class SDocObjectFactory:
 
         statement_multiline = None
         if RequirementFieldName.STATEMENT in requirement_dict:
-            statement_multiline_ = requirement_dict[RequirementFieldName.STATEMENT]
+            statement_multiline_ = requirement_dict[
+                RequirementFieldName.STATEMENT
+            ]
             if isinstance(statement_multiline_, str):
                 statement_multiline = statement_multiline_
 
         rationale_multiline = None
         if RequirementFieldName.RATIONALE in requirement_dict:
-            rationale_multiline_ = requirement_dict[RequirementFieldName.RATIONALE]
+            rationale_multiline_ = requirement_dict[
+                RequirementFieldName.RATIONALE
+            ]
             if isinstance(rationale_multiline_, str):
                 rationale_multiline = rationale_multiline_
 

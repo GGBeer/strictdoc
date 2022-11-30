@@ -9,7 +9,6 @@ from strictdoc.backend.sdoc.models.document_grammar import (
     GrammarElementField,
     GrammarElement,
 )
-from strictdoc.backend.sdoc.models.reference import ReferenceType
 from strictdoc.backend.sdoc.models.requirement import (
     Requirement,
     RequirementField,
@@ -18,7 +17,9 @@ from strictdoc.backend.sdoc.models.type_system import (
     GrammarElementFieldSingleChoice,
     GrammarElementFieldMultipleChoice,
     GrammarElementFieldTag,
+    RequirementFieldName,
     GrammarElementFieldTypeValue,
+    ReferenceType,
 )
 
 
@@ -73,7 +74,7 @@ def validate_requirement(
             break
         if valid_or_not_required_field:
             # COMMENT can appear multiple times.
-            if requirement_field.field_name == "COMMENT":
+            if requirement_field.field_name == RequirementFieldName.COMMENT:
                 requirement_field = next(requirement_field_iterator, None)
                 break
             grammar_field = next(grammar_fields_iterator, None)
@@ -161,16 +162,22 @@ def validate_requirement_field(
                 **get_location(requirement),
             )
     elif isinstance(grammar_field, GrammarElementFieldTypeValue):
-        requirement_field_value_references = requirement_field.field_value_references
+        requirement_field_value_references = (
+            requirement_field.field_value_references
+        )
         for reference in requirement_field_value_references:
-            if reference.ref_type not in ReferenceType.GRAMMAR_REFERENCE_TYPE_MAP.keys() \
-                    or ReferenceType.GRAMMAR_REFERENCE_TYPE_MAP[reference.ref_type] not in grammar_field.types:
-                raise StrictDocSemanticError.invalid_type_value_reference_item(
-                    requirement=requirement,
-                    document_grammar=document_grammar,
-                    requirement_field=requirement_field,
-                    reference_item = reference,
-                    **get_location(requirement),
-                )
+            if (
+                reference.ref_type in ReferenceType.GRAMMAR_REFERENCE_TYPE_MAP
+            ) and ReferenceType.GRAMMAR_REFERENCE_TYPE_MAP[
+                reference.ref_type
+            ] in grammar_field.types:
+                continue
+            raise StrictDocSemanticError.invalid_type_value_reference_item(
+                requirement=requirement,
+                document_grammar=document_grammar,
+                requirement_field=requirement_field,
+                reference_item=reference,
+                **get_location(requirement),
+            )
 
     return True
