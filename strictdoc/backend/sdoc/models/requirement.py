@@ -266,10 +266,10 @@ class Requirement(
                 return True
         return False
 
-    def get_requirement_references(self, ref_type) -> List[Reference]:
-        if not self.references or len(self.references) == 0:
-            return []
+    def get_requirement_references(self, ref_type: ReferenceType) -> List[Reference]:
         references: List[Reference] = []
+        if not self.references or len(self.references) == 0:
+            return references
         for reference in self.references:
             if reference.ref_type != ref_type:
                 continue

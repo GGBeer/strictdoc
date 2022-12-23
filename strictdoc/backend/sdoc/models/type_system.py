@@ -56,8 +56,15 @@ class FileEntry:
 
 
 class FileEntryFormat:
+    BIBTEX = "BibTex"
     SOURCECODE = "Sourcecode"
     PYTHON = "Python"
+
+
+@auto_described
+class BibFileEntry(FileEntry):
+    def __init__(self, parent, g_file_path: str):
+        super().__init__(parent, FileEntryFormat.BIBTEX, g_file_path)
 
 
 class BibEntryFormat:
@@ -72,51 +79,57 @@ class BibEntry:
         self.parent = parent
         self.bib_format = bib_format or BibEntryFormat.STRING
         self.bib_value = bib_value
-        self.ref_cite = None
-        self.ref_detail = None
-        self.bibtex_entry = None
 
-        if self.bib_format == BibEntryFormat.STRING:
-            # <CitationKey>, <Entry details>
-            # Note: A STRING entry is converted in a BibTex @misc entry type
-            # where the details are put in the Entries "note" field.
-            # An empty details field is treated as a Citation!
-            cite, detail = (
-                bib_value.split(",", 1) if "," in bib_value else (bib_value, "")
-            )
-            self.ref_cite = cite.strip()
-            self.ref_detail = (
-                detail.strip()
-                if (isinstance(detail, str) and len(detail) > 0)
-                else None
-            )
-            if self.ref_detail:
-                self.bibtex_entry = Entry(
-                    "misc", fields={"note": self.ref_detail}
+        self.ref_cite: Optional[str] = None
+        self.ref_detail: Optional[str] = None
+        self.bibtex_entry: Optional[Entry] = None
+
+    def parse_bib_entry(self):
+        if self.ref_cite is None:
+            bib_value = self.bib_value
+            if self.bib_format == BibEntryFormat.STRING:
+                # <CitationKey>[, <Entry details>]
+                # Note: A STRING entry is converted in a BibTex @misc entry type
+                # where the details are put in the Entries "note" field.
+                # An empty details field is treated as a Citation!
+                cite, detail = (
+                    self.bib_value.split(",", 1) if "," in self.bib_value else (self.bib_value, "")
                 )
-                self.bibtex_entry.key = self.ref_cite
-            # TODO In case of a Citation, Verify/Reference the cited BibEntry
+                self.ref_cite = cite.strip()
+                self.ref_detail = (
+                    detail.strip()
+                    if (isinstance(detail, str) and len(detail) > 0)
+                    else None
+                )
+                if self.ref_detail:
+                    self.bibtex_entry = Entry(
+                        "misc", fields={"note": self.ref_detail}
+                    )
+                    self.bibtex_entry.key = self.ref_cite
+                # TODO In case of a Citation, Verify/Reference the cited BibEntry
 
-        elif self.bib_format == BibEntryFormat.BIBTEX:
-            # @<BibTex entry type>{<CitationKey>, <BibTex key-value pairs>}
-            self.bibtex_entry = Entry.from_string(bib_value, "bibtex")
-            self.ref_cite = self.bibtex_entry.key
+            elif self.bib_format == BibEntryFormat.BIBTEX:
+                # @<BibTex entry type>{<CitationKey>, <BibTex key-value pairs>}
+                # Note: An inline Requirement-BibRef BibTex entry is auto-included as Citation in the Document Bibliography
+                # Note: A Citation-RefsDetail for this Entry should be added by an additional Citation BibEntry
+                self.bibtex_entry = Entry.from_string(bib_value, "bibtex")
+                self.ref_cite = self.bibtex_entry.key
 
-        elif self.bib_format == BibEntryFormat.CITATION:
-            # <CitationKey>[, <Reference details>]
-            # Ref.Details may include additional info about the subsection,
-            # paragraph, page(s), etc. to be referenced, not already included
-            # in the cited BibTex entry
-            cite, detail = (
-                bib_value.split(",", 1) if "," in bib_value else (bib_value, "")
-            )
-            self.ref_cite = cite.strip()
-            self.ref_detail = (
-                detail.strip()
-                if (isinstance(detail, str) and len(detail) > 0)
-                else None
-            )
-            # TODO Verify/Reference the cited BibEntry
+            elif self.bib_format == BibEntryFormat.CITATION:
+                # <CitationKey>[, <Reference details>]
+                # Ref.Details may include additional info about the subsection,
+                # paragraph, page(s), etc. to be referenced, not already included
+                # in the cited BibTex entry
+                cite, detail = (
+                    bib_value.split(",", 1) if "," in bib_value else (bib_value, "")
+                )
+                self.ref_cite = cite.strip()
+                self.ref_detail = (
+                    detail.strip()
+                    if (isinstance(detail, str) and len(detail) > 0)
+                    else None
+                )
+                # TODO Verify/Reference the cited BibEntry
 
 
 class ReferenceType:

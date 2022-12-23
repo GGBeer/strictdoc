@@ -38,12 +38,21 @@ Document[noskipws]:
   'TITLE: ' title = SingleLineString '\n'
   (config = DocumentConfig)?
   ('\n' grammar = DocumentGrammar)?
+  ('\n' bibliography = DocumentBibliography)?
   free_texts *= SpaceThenFreeText
   section_contents *= SectionOrRequirement
 ;
 
 ReservedKeyword[noskipws]:
-  'DOCUMENT' | 'GRAMMAR'
+  'DOCUMENT' | 'GRAMMAR' | 'BIBLIOGRAPHY'
+;
+
+DocumentBibliography[noskipws]:
+  '[BIBLIOGRAPHY]' '\n'
+  ( 'BIBFILES:' '\n'
+    bib_files *= BibFileEntry )?
+  ( 'ENTRIES:' '\n'
+    bib_entries += BibEntry )?
 ;
 
 DocumentGrammar[noskipws]:
@@ -185,7 +194,7 @@ SpaceThenFreeText[noskipws]:
 ;
 
 ReservedKeyword[noskipws]:
-  'DOCUMENT' | 'GRAMMAR' | 'SECTION' | 'FRAGMENT_FROM_FILE' | 'FREETEXT'
+  'DOCUMENT' | 'GRAMMAR' | 'BIBLIOGRAPHY' | 'SECTION' | 'FRAGMENT_FROM_FILE' | 'FREETEXT'
 ;
 
 Requirement[noskipws]:

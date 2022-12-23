@@ -40,23 +40,33 @@ FileReference[noskipws]:
   g_file_entry = FileEntry
 ;
 
+BibFileEntry[noskipws]:
+  '- FORMAT: BibTex\n'
+  '  VALUE: ' g_file_path = /.*$/ '\n'
+;
+
 FileEntry[noskipws]:
   ('  FORMAT: ' g_file_format = FileEntryFormat '\n')?
    '  VALUE: ' g_file_path = /.*$/ '\n'
 ;
 
 FileEntryFormat[noskipws]:
-  'Sourcecode' | 'Python' | /[A-Z]+[A-Z_]*/
+  'BibTex' | 'Sourcecode' | 'Python' | /[a-zA-Z]+[a-zA-Z0-9_]*/
 ;
 
 BibReference[noskipws]:
   '- TYPE: BibRef' '\n'
-  bib_entry = BibEntry
+ ('  FORMAT: ' bib_format = BibEntryFormat '\n')?
+  '  VALUE: ' bib_value = /.*$/ '\n'
 ;
 
 BibEntry[noskipws]:
-  ('  FORMAT: ' bib_format = BibEntryFormat '\n')?
+  ('- FORMAT: ' bib_format = BibEntryFormat '\n'
    '  VALUE: ' bib_value = /.*$/ '\n'
+  ) |
+  (
+   '- VALUE: ' bib_value = /.*$/ '\n'
+  )
 ;
 
 BibEntryFormat[noskipws]:

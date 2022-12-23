@@ -1,19 +1,24 @@
-from typing import Optional
+from typing import Optional, List
 
 from textx import get_location
 
 from strictdoc.backend.sdoc.document_reference import DocumentReference
 from strictdoc.backend.sdoc.error_handling import StrictDocSemanticError
 from strictdoc.backend.sdoc.models.document import Document
+from strictdoc.backend.sdoc.models.document_bibliography import (
+    DocumentBibliography,
+)
 from strictdoc.backend.sdoc.models.document_config import DocumentConfig
 from strictdoc.backend.sdoc.models.document_grammar import DocumentGrammar
 from strictdoc.backend.sdoc.models.fragment import Fragment
 from strictdoc.backend.sdoc.models.fragment_from_file import FragmentFromFile
+from strictdoc.backend.sdoc.models.reference import Reference, BibReference
 from strictdoc.backend.sdoc.models.requirement import (
     CompositeRequirement,
     Requirement,
 )
 from strictdoc.backend.sdoc.models.section import Section
+from strictdoc.backend.sdoc.models.type_system import ReferenceType, BibEntryFormat
 from strictdoc.backend.sdoc.validations.requirement import validate_requirement
 from strictdoc.helpers.exception import StrictDocException
 
@@ -25,6 +30,7 @@ class ParseContext:
         self.document_grammar: DocumentGrammar = DocumentGrammar.create_default(
             None
         )
+        self.document_bibliography: DocumentBibliography = DocumentBibliography(None, bib_files=None, bib_entries=None)
         self.current_include_parent = None
 
 
@@ -41,6 +47,7 @@ class SDocParsingProcessor:
             "Document": self.process_document,
             "DocumentConfig": self.process_document_config,
             "DocumentGrammar": self.process_document_grammar,
+            "DocumentBibliography": self.process_document_bibliography,
             "Section": self.process_section,
             "FragmentFromFile": self.process_include,
             "CompositeRequirement": self.process_composite_requirement,
@@ -54,6 +61,15 @@ class SDocParsingProcessor:
 
     def process_document_grammar(self, document_grammar: DocumentGrammar):
         self.parse_context.document_grammar = document_grammar
+
+    def process_document_bibliography(
+        self, document_bibliography: DocumentBibliography
+    ):
+        self.parse_context.document_bibliography = document_bibliography
+
+        # Parse the BibTex Files and global BibTex Entries
+        self.parse_context.document_bibliography.parse_bib_files()
+        self.parse_context.document_bibliography.parse_bib_entries()
 
     def process_section(self, section: Section):
         section.ng_document_reference = self.parse_context.document_reference
@@ -185,6 +201,17 @@ class SDocParsingProcessor:
         requirement.ng_document_reference = (
             self.parse_context.document_reference
         )
+
+        bib_refs: list[Reference] = requirement.get_requirement_references(ReferenceType.BIB_REF)
+        bib_ref: BibReference
+        for bib_ref in bib_refs:
+            bib_ref.bib_entry.parse_bib_entry()
+            if bib_ref.bib_entry.bibtex_entry:
+                self.parse_context.document_bibliography.bib_db.add_entry(
+                    bib_ref.bib_entry.ref_cite,
+                    bib_ref.bib_entry.bibtex_entry)
+            self.parse_context.document_bibliography.bib_citations.add(
+                bib_ref.bib_entry.ref_cite)
 
         if isinstance(requirement.parent, Section):
             self._resolve_parents(requirement)
