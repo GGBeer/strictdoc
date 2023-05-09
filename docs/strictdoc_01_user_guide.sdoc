@@ -490,7 +490,14 @@ fields are optional. The ``OPTIONS`` field can be used for specifying
 the document configuration options. Note: The sequence of the fields is defined
 by the document's Grammar, i.e. should not be changed.
 
-Finally an optional ``[FREETEXT]`` block can be included.
+After the ``[DOCUMENT]`` element, optionally a ``[GRAMMAR]`` and/or a
+``[BIBLIOGRAPHY]`` element can be included (see sections
+[LINK: SECTION-CUSTOM-GRAMMARS] and [LINK: SECTION-BIBLIOGRAPHY]).
+
+Finally an optional ``[FREETEXT]`` block can be included, often used as the
+document's summary or intro. Hereafter the document's ``[SECTION]`` and
+``[REQUIREMENT]`` parts are included. Optionally these can be included as
+separate files using ``[FRAGMENT_FROM_FILE]`` elements.
 
 .. code-block:: text
 
@@ -642,7 +649,7 @@ The following ``REQUIREMENT`` fields are supported:
      - Tags of the requirement (comma separated AlphaNum words)
 
    * - ``REFS``
-     - List of Parent and File references
+     - List of Parent, File and External references
 
    * - ``TITLE``
      - Title of the requirement
@@ -736,10 +743,12 @@ supported.
 [/SECTION]
 
 [SECTION]
+UID: SECTION-REFS
 TITLE: References (REFS)
 
 [FREETEXT]
-The ``REFS`` field is used to connect requirements to each other:
+The ``REFS`` field is used to connect requirements to each other or to provide
+more details about its implementation or definition:
 
 .. code-block:: text
 
@@ -756,7 +765,11 @@ The ``REFS`` field is used to connect requirements to each other:
     - TYPE: Parent
       VALUE: REQ-001
     - TYPE: File
+      FORMAT: Python
       VALUE: /full/path/file.py
+    - TYPE: BibRef
+      FORMAT: Citation
+      VALUE: RFC5280, section 4.2.1.6
     TITLE: Requirement #2's title
     STATEMENT: Requirement #2 statement
 
@@ -767,16 +780,52 @@ adding multiple ``TYPE: Parent``-``VALUE`` items. The opposite direction i.e.
 references e.g. ``Req-A`` ⇒ ``Req-B`` ⇒ ``Reg-C`` ⇒ ``Req-A`` must be avoided.
 
 The ``TYPE: File``-``VALUE`` attribute contains a filename referencing the
-implementation of (parts of) this requirement. A requirement may add multiple
-file references requirements by adding multiple ``TYPE: File``-``VALUE`` items.
+implementation of (parts of) this requirement. The ``FORMAT`` attribute is
+optional and describes the file's content type by an AlphaNum keyword.
+A requirement may add multiple file references by adding multiple
+``TYPE: File``-``VALUE`` items.
+
+The ``TYPE: BibRef``-``VALUE`` attribute contains a bibliography citation
+entry, optionally followed by the specific section/part for that citation.
+This citation can be used for referencing a company policy document, technical
+specifications, regulatory requirements, etc. which defines/describes the
+specific baseline requirements for this requirement.
+Alternative a full BibTex Entry can be provided here:
+
+.. code-block:: text
+
+    - TYPE: BibRef
+      FORMAT: BibTex
+      VALUE: @book{hawking1989brief, title={A Brief History of Time: From the Big Bang to Black Holes}, author={Hawking, Stephen}, isbn={9780553176988}, year={1989}, publisher={Bantam Books} }
+
+Such "inline" BibTex entries are automatically added to the Bibliography
+section, with a Citation in this Requirement.
+
+For convenience, a "String" variant can be used.
+
+.. code-block:: text
+
+    - TYPE: BibRef
+      FORMAT: String
+      VALUE: SDOD_UG, StrictDoc User Guide, https://strictdoc.readthedocs.io/en/stable/strictdoc_01_user_guide.html
+
+A "String" BibRef entry is internally converted to a BibTex "misc" entry using
+the first Keyword as the Citation key and the rest as the entries "notes"
+value.
+
+A requirement may add multiple bibliography citation entries by adding multiple
+``TYPE: BibRef``-``VALUE`` items.
+
+**Note:** The requirement's statement and rationale should detail which specific
+item/section of an external reference is to be fulfilled.
+
+**Note:** It is recommended to define all Bibliography entries in the
+``BIBLIOGRAPHY`` section to avoid duplications and ease managing the entries
+(see section [LINK: SECTION-BIBLIOGRAPHY]).
 
 **Note:** The ``TYPE: Parent`` is currently the only fully supported type of
-connection. Linking requirements to files is still experimental (see also
-[LINK: SECTION-TRACEABILITY-REQS-TO-SOURCE-CODE]).
-
-**Note:** In the near future, adding information about external references (e.g.
-company policy documents, technical specifications, regulatory requirements,
-etc.) is planned.
+connection. Linking requirements to files and the Bibliography/BibRef is still
+experimental (see also [LINK: SECTION-TRACEABILITY-REQS-TO-SOURCE-CODE]).
 
 **Note:** By design, StrictDoc will only show parent or child links if both
 requirements connected with a reference have ``UID`` defined.
@@ -1131,6 +1180,74 @@ Which will resolve to the following document after inclusion:
 [/SECTION]
 
 [SECTION]
+UID: SECTION-BIBLIOGRAPHY
+TITLE: Bibliography and Citations
+
+[FREETEXT]
+Requirements-Engineering often has the need to add references to external
+documents in the Requirement items, which set technical and/or regulatory
+boundaries for a project, e.g. must use crypto XYZ as defined by ABCD, should
+implement TLS 1.3 as defined by RFC-8446, customer/company policy requires that
+only security/safety certified components should be used, etc.
+Also information to additional background readings or other important material
+linked to the project could be included here.
+
+These external references should be collected in a list detailing the exact
+referenced items and its version to be applied. Having different versions of a
+referenced item in this list should be avoided.
+
+StrictDoc uses BibTex entries to define these external references.
+These BibTex entries then can be cited in the Requirement REFS BibRef elements
+(see section [LINK: SECTION-REFS]).
+
+The ``BIBLIOGRAPHY`` section is used to define the the available BibTex entries,
+either via BibTex files or as inline BibTex entries:
+
+.. code-block:: text
+
+    [BIBLIOGRAPHY]
+    BIBFILES:
+    - FORMAT: BibTex
+      VALUE: _bib/ietf-rfc.bib
+    - FORMAT: BibTex
+      VALUE: _bib/iso.bib
+    ENTRIES:
+    - TYPE: BibRef
+      FORMAT: BibTex
+      VALUE: @book{hawking1989brief, title={A Brief History of Time: From the Big Bang to Black Holes}, author={Hawking, Stephen}, isbn={9780553176988}, year={1989}, publisher={Bantam Books} }
+    - TYPE: BibRef
+      FORMAT: Citation
+      VALUE: hawking1989brief
+
+**Note:** The Bibliography BibFiles and Entries may contain a lot of
+unreferenced BibTex entries. For this reason, these are not automatically added
+as citations. In case a BibTex entry should be explicitly listed in the
+generated document even when it is not referenced in the requirements, an
+additional Citation entry should be made in the Bibliography-Entries section.
+
+**Note:** It is recommended to create/use file collections of BibTex entries.
+This way updating, versioning, correcting and sharing BibTex entries between
+multiple documents/users is much easier to handle.
+Several open source tools are available for editing such BibTex files (e.g.
+`JabRef <https://www.jabref.org/>`_).
+
+**Note:** Using the BibRef "String" Format is also allowed in the
+Bibliography-Entries section, however it is recommended to define and use
+BibTex entries instead. A BibRef "String" Format entry is automatically added
+as citation, to provide an easy way of creating an initial bibliography.
+
+**TODO:** Currently the BibRef Citations are only rendered as part of the
+Requirements in the Table-View. The rendering of the Bibliography section
+is not yet implemented!
+
+**TODO:** Currently, it is not possible to edit the Bibliography section via
+the web user interface.
+
+[/FREETEXT]
+
+[/SECTION]
+
+[SECTION]
 UID: SECTION-CUSTOM-GRAMMARS
 TITLE: Custom grammars
 
@@ -1217,7 +1334,7 @@ The supported field types are:
      - comma-separated list of tags/key words. Only Alphanumeric tags (a-z, A-Z, 0-9 and underscore) are supported.
 
    * - ``Reference``
-     - comma-separated list with allowed reference types: ``ParentReqReference``, ``FileReference``
+     - comma-separated list with allowed reference types: ``ParentReqReference``, ``FileReference``, ``BibReference``
 
 Example:
 
@@ -1252,7 +1369,7 @@ Example:
         TYPE: String
         REQUIRED: True
       - TITLE: REFS
-        TYPE: Reference(ParentReqReference, FileReference)
+        TYPE: Reference(ParentReqReference, FileReference, BibReference)
         REQUIRED: True
 
     [FREETEXT]
