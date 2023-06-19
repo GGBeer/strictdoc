@@ -109,8 +109,8 @@ class DocumentConfigFormObject(ErrorObject):
 
         document_freetext = ""
         document_freetext_escaped = ""
-        if len(document.free_texts) > 0:
-            freetext: FreeText = document.free_texts[0]
+        if len(document.get_freetext()) > 0:
+            freetext: FreeText = document.get_freetext()[0]
             document_freetext = freetext.get_parts_as_text()
             document_freetext_escaped = html.escape(document_freetext)
 

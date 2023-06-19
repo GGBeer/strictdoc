@@ -42,7 +42,6 @@ class ConfluenceHTMLTableImport:
             title="Imported Doc",
             config=None,
             grammar=None,
-            free_texts=[],
             section_contents=[],
         )
         for section_idx, reqs in enumerate(reqs_array_array):
@@ -50,7 +49,6 @@ class ConfluenceHTMLTableImport:
             section = Section(
                 document, None, "1", section_name,
                 requirement_prefix=None,
-                free_texts=[],
                 section_contents=[]
             )
             section.ng_document_reference = DocumentReference()

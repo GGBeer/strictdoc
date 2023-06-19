@@ -285,6 +285,89 @@ String 4
     assert input == output
 
 
+def test_026_free_text_multi():
+    input = """
+[DOCUMENT]
+TITLE: Test Doc
+
+[FREETEXT]
+Hello world D0-1
+[/FREETEXT]
+
+[FREETEXT]
+Hello world D0-2
+[/FREETEXT]
+
+[SECTION]
+TITLE: Section-Title-1
+
+[FREETEXT]
+Hello world S1-1
+[/FREETEXT]
+
+[FREETEXT]
+Hello world S1-2
+[/FREETEXT]
+
+[REQUIREMENT]
+TITLE: REQ-S1-1
+
+[FREETEXT]
+Hello world S1-3
+[/FREETEXT]
+
+[REQUIREMENT]
+TITLE: REQ-S1-2
+
+[FREETEXT]
+Hello world S1-4
+[/FREETEXT]
+
+[SECTION]
+TITLE: Section-Title-1.1
+
+[FREETEXT]
+Hello world S1.1-1
+[/FREETEXT]
+
+[FREETEXT]
+Hello world S1.1-2
+[/FREETEXT]
+
+[REQUIREMENT]
+TITLE: REQ-S1.1-1
+
+[FREETEXT]
+Hello world S1.1-3
+[/FREETEXT]
+
+[REQUIREMENT]
+TITLE: REQ-S1.1-2
+
+[FREETEXT]
+Hello world S1.1-4
+[/FREETEXT]
+
+[/SECTION]
+
+[/SECTION]
+
+[FREETEXT]
+Hello world D0-3
+[/FREETEXT]
+""".lstrip()
+
+    reader = SDReader()
+
+    document = reader.read(input)
+    assert isinstance(document, Document)
+
+    writer = SDWriter()
+    output = writer.write(document)
+
+    assert input == output
+
+
 def test_030_multiline_statement():
     input_sdoc = """
 [DOCUMENT]

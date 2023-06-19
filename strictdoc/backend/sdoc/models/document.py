@@ -4,6 +4,7 @@ from typing import List, Optional
 from strictdoc.backend.sdoc.models.document_config import DocumentConfig
 from strictdoc.backend.sdoc.models.document_grammar import DocumentGrammar
 from strictdoc.backend.sdoc.models.free_text import FreeText
+from strictdoc.backend.sdoc.models.node import Node
 from strictdoc.core.document_meta import DocumentMeta
 from strictdoc.helpers.auto_described import auto_described
 
@@ -15,15 +16,11 @@ class Document:  # pylint: disable=too-many-instance-attributes
         title: str,
         config: Optional[DocumentConfig],
         grammar: Optional[DocumentGrammar],
-        free_texts: List[FreeText],
-        section_contents,
+        section_contents: List[Node],
     ):
-        assert isinstance(free_texts, list)
-
         self.title: str = title
         self.config = config if config else DocumentConfig.default_config(self)
         self.grammar: Optional[DocumentGrammar] = grammar
-        self.free_texts: List[FreeText] = free_texts
         self.section_contents = section_contents
 
         self.ng_level: int = 0
@@ -31,6 +28,29 @@ class Document:  # pylint: disable=too-many-instance-attributes
         self.meta: Optional[DocumentMeta] = None
         self.node_id = uuid.uuid4().hex
         self.reserved_uid = "DOCUMENT"
+
+    @property
+    def is_freetext(self):
+        return False
+
+    @property
+    def has_freetext(self) -> bool:
+        for item in self.section_contents:
+            if isinstance(item, FreeText):
+                return True
+        return False
+
+    def get_freetext(self) -> List[FreeText]:
+        freetext: List[FreeText] = []
+        for item in self.section_contents:
+            if isinstance(item, FreeText):
+                freetext.append(item)
+        return freetext
+
+    def add_freetext(self, freetext: Optional[FreeText]):
+        if freetext is None:
+            return
+        self.section_contents.append(freetext)
 
     def assign_meta(self, meta):
         assert isinstance(meta, DocumentMeta)
@@ -42,11 +62,11 @@ class Document:  # pylint: disable=too-many-instance-attributes
     def has_any_requirements(self) -> bool:
         task_list = list(self.section_contents)
         while len(task_list) > 0:
-            section_or_requirement = task_list.pop(0)
-            if section_or_requirement.is_requirement:
+            content = task_list.pop(0)
+            if content.is_requirement:
                 return True
-            assert section_or_requirement.is_section, section_or_requirement
-            task_list.extend(section_or_requirement.section_contents)
+            elif content.is_section:
+                task_list.extend(content.section_contents)
         return False
 
     @staticmethod
@@ -74,9 +94,3 @@ class Document:  # pylint: disable=too-many-instance-attributes
         yield from self.grammar.elements[
             0
         ].enumerate_custom_content_field_titles()
-
-    def set_freetext(self, freetext: Optional[FreeText]):
-        if freetext is None:
-            self.free_texts = []
-            return
-        self.free_texts = [freetext]

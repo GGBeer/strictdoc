@@ -32,9 +32,6 @@ class RSTWriter:
                 document.title, 0, reference_uid=document_uid
             )
 
-        for free_text in document.free_texts:
-            output += self._print_free_text(free_text)
-
         for content_node in document_iterator.all_content():
             if isinstance(content_node, Section):
                 output += self._print_rst_header(
@@ -42,9 +39,8 @@ class RSTWriter:
                     content_node.ng_level,
                     content_node.reserved_uid,
                 )
-                for free_text in content_node.free_texts:
-                    output += self._print_free_text(free_text)
-
+            elif isinstance(content_node, FreeText):
+                output += self._print_free_text(content_node)
             elif isinstance(content_node, Requirement):
                 output += self._print_requirement_fields(content_node)
 

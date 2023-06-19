@@ -16,3 +16,8 @@ class Node(ABC):
     @abstractmethod
     def is_composite_requirement(self):
         raise NotImplementedError(self)
+
+    @property
+    @abstractmethod
+    def is_freetext(self):
+        raise NotImplementedError(self)

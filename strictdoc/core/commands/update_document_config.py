@@ -64,8 +64,8 @@ class UpdateDocumentConfigCommand:
         free_text: Optional[FreeText] = None
         if len(form_object.document_freetext_unescaped) > 0:
             existing_anchor_uids_to_remove = set()
-            if len(document.free_texts) > 0:
-                for part in document.free_texts[0].parts:
+            if len(document.get_freetext()) > 0:
+                for part in document.get_freetext()[0].parts:
                     if isinstance(part, Anchor):
                         existing_anchor_uids_to_remove.add(part.value)
 

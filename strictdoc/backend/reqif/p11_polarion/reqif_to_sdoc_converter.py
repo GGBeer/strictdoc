@@ -176,8 +176,12 @@ class P11_ReqIFToSDocConverter:  # pylint: disable=invalid-name
             and isinstance(document.section_contents[0], Section)
             and document.section_contents[0].title == "Abstract"
         ):
-            assert len(document.section_contents[0].free_texts)
-            document.free_texts = document.section_contents[0].free_texts
+            assert len(document.section_contents[0].get_freetext())
+<<<<<<< HEAD
+            document.free_texts = document.section_contents[0].get_freetext()
+=======
+            document.add_freetext(document.section_contents[0].get_freetext())
+>>>>>>> 35fefed0 (Merge-Main + Fixes)
             document.section_contents.pop(0)
 
         for used_spec_object_type_id in used_spec_object_types_ids:
@@ -286,7 +290,7 @@ class P11_ReqIFToSDocConverter:  # pylint: disable=invalid-name
         document_config: DocumentConfig = DocumentConfig.default_config(None)
         document_config.markup = "HTML"
         document_title = title if title else "<No title>"
-        document = Document(document_title, document_config, None, [], [])
+        document = Document(document_title, document_config, None, [])
         document.grammar = DocumentGrammar.create_default(document)
         return document
 
@@ -314,17 +318,6 @@ class P11_ReqIFToSDocConverter:  # pylint: disable=invalid-name
         else:
             raise NotImplementedError(attribute_map)
 
-        free_texts = []
-        if ReqIFChapterField.TEXT in spec_object.attribute_map:
-            free_text = unescape(
-                spec_object.attribute_map[ReqIFChapterField.TEXT].value
-            )
-            free_texts.append(
-                FreeText(
-                    parent=None,
-                    parts=[free_text],
-                )
-            )
         # Sanitize the title. Titles can also come from XHTML attributes with
         # custom newlines such as:
         #             <ATTRIBUTE-VALUE-XHTML>
@@ -338,10 +331,22 @@ class P11_ReqIFToSDocConverter:  # pylint: disable=invalid-name
             custom_level=None,
             title=section_title,
             requirement_prefix=None,
-            free_texts=free_texts,
             section_contents=[],
         )
         section.ng_level = level
+
+        if ReqIFChapterField.TEXT in spec_object.attribute_map:
+            text = unescape(
+                spec_object.attribute_map[ReqIFChapterField.TEXT].value
+            )
+            free_text = FreeText(
+                parent=section,
+                uid=None,
+                parts=[text],
+            )
+            free_text.ng_level = level + 1
+            section.add_freetext(free_text)
+
         return section
 
     @staticmethod

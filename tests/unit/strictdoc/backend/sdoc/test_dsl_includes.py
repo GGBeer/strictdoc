@@ -68,28 +68,28 @@ STATEMENT: Sub sub requirement
 
 def validate_document(document):
     assert isinstance(document, Document)
-    assert len(document.free_texts) == 1
+    assert document.has_freetext
 
-    composite_requirement = document.section_contents[2]
+    composite_requirement = document.section_contents[3]
     assert isinstance(composite_requirement, CompositeRequirement)
 
-    requirement = document.section_contents[1]
+    requirement = document.section_contents[2]
     assert isinstance(requirement, Requirement)
     assert requirement.ng_document_reference.get_document() == document
     assert requirement.document == document
     assert requirement.ng_level == 1
 
-    section = document.section_contents[0]
+    section = document.section_contents[1]
     assert isinstance(section, Section)
     assert section.title == "Section 1"
     assert section.ng_level == 1
-    assert len(section.free_texts) == 1
+    assert section.has_freetext
 
-    sub_requirement = section.section_contents[0]
+    sub_requirement = section.section_contents[1]
     assert isinstance(sub_requirement, Requirement)
     assert sub_requirement.ng_level == 2
 
-    composite_requirement = section.section_contents[1]
+    composite_requirement = section.section_contents[2]
     assert isinstance(composite_requirement, CompositeRequirement)
     assert composite_requirement.ng_level == 2
 

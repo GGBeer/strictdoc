@@ -113,9 +113,7 @@ class SDWriter:
                 output += "\n  FIELDS:\n"
                 for grammar_field in element.fields:
                     output += SDWriter._print_grammar_field_type(grammar_field)
-        for free_text in document.free_texts:
-            output += "\n"
-            output += self._print_free_text(free_text)
+
         closing_tags = []
         for content_node in document_iterator.all_content():
             while (
@@ -146,6 +144,8 @@ class SDWriter:
                 output += self._print_requirement_fields(
                     section_content=content_node, document=document
                 )
+            elif isinstance(content_node, FreeText):
+                output += self._print_free_text(content_node)
 
         for closing_tag, _ in reversed(closing_tags):
             output += self._print_closing_tag(closing_tag)
@@ -176,9 +176,6 @@ class SDWriter:
             output += section.requirement_prefix
             output += "\n"
 
-        for free_text in section.free_texts:
-            output += "\n"
-            output += self._print_free_text(free_text)
         return output
 
     @staticmethod
@@ -274,8 +271,7 @@ class SDWriter:
         output += SDWriter.print_free_text_content(free_text)
         if output[-1] != "\n":
             output += "\n"
-        output += "[/FREETEXT]"
-        output += "\n"
+        output += "[/FREETEXT]\n"
         return output
 
     @staticmethod

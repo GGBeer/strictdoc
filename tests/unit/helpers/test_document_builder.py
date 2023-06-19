@@ -65,9 +65,6 @@ class DocumentBuilder:
             requirement_style=None,
             requirement_in_toc=None,
         )
-        free_texts = []
         section_contents = []
-        document = Document(
-            "Test Document", config, None, free_texts, section_contents
-        )
+        document = Document("Test Document", config, None, section_contents)
         return document

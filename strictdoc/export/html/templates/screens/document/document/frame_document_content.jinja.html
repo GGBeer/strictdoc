@@ -14,6 +14,12 @@
         {%- elif section_or_requirement.is_section %}
           {%- set section = section_or_requirement %}
           {% include "components/section/index_extends_node.jinja" %}
+
+        {%- elif section_or_requirement.is_freetext %}
+          {%- set freetext = section_or_requirement %}
+          <sdoc-section-text>
+            {{ renderer.render_free_text(document_type, freetext) }}
+          </sdoc-section-text>
         {%- endif %}
 
         {%- endfor %}

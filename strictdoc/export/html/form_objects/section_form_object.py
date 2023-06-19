@@ -36,8 +36,8 @@ class SectionFormObject(ErrorObject):
     @staticmethod
     def create_from_section(*, section: Section):
         statement = (
-            section.free_texts[0].get_parts_as_text()
-            if len(section.free_texts) > 0
+            section.get_freetext()[0].get_parts_as_text()
+            if section.has_freetext
             else ""
         )
         return SectionFormObject(

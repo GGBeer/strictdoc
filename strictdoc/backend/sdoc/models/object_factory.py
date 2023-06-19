@@ -16,7 +16,6 @@ class SDocObjectFactory:
             title=title if title else "NONAME",
             config=None,
             grammar=None,
-            free_texts=[],
             section_contents=[],
         )
 

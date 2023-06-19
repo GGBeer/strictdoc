@@ -35,10 +35,13 @@ from strictdoc.backend.reqif.sdoc_reqif_fields import (
 )
 from strictdoc.backend.sdoc.models.document import Document
 from strictdoc.backend.sdoc.models.document_grammar import DocumentGrammar
+from strictdoc.backend.sdoc.models.section import (
+    Section,
+)
 from strictdoc.backend.sdoc.models.requirement import (
     Requirement,
 )
-from strictdoc.backend.sdoc.models.section import Section
+
 from strictdoc.backend.sdoc.models.type_system import (
     GrammarElementField,
     GrammarElementFieldMultipleChoice,
@@ -221,7 +224,7 @@ class SDocToReqIFObjectConverter:
             )
 
             current_hierarchy = root_hierarchy
-            if len(document.free_texts) > 0:
+            if document.has_freetext:
                 # fmt: off
                 document_free_text_spec_object = (
                     SDocToReqIFObjectConverter
@@ -402,7 +405,7 @@ class SDocToReqIFObjectConverter:
         cls, document: Document, document_spec_object_type: str
     ) -> ReqIFSpecObject:
         assert isinstance(document, Document)
-        assert len(document.free_texts) > 0
+        assert document.has_freetext
         attributes = []
         # See SDOC_IMPL_1.
         title_attribute = SpecObjectAttribute(
@@ -413,7 +416,7 @@ class SDocToReqIFObjectConverter:
         )
         attributes.append(title_attribute)
         free_text_value = escape(
-            SDWriter.print_free_text_content(document.free_texts[0])
+            SDWriter.print_free_text_content((document.get_freetext())[0])
         )
         free_text_attribute = SpecObjectAttribute(
             xml_node=None,
@@ -446,9 +449,9 @@ class SDocToReqIFObjectConverter:
             value=section.title,
         )
         attributes.append(title_attribute)
-        if len(section.free_texts) > 0:
+        if section.has_freetext:
             free_text_value = escape(
-                SDWriter.print_free_text_content(section.free_texts[0])
+                SDWriter.print_free_text_content(section.get_freetext()[0])
             )
             free_text_attribute = SpecObjectAttribute(
                 xml_node=None,

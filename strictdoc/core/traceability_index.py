@@ -226,16 +226,16 @@ class TraceabilityIndex:  # pylint: disable=too-many-public-methods, too-many-in
         self, anchor_uid: str
     ) -> Union[Document, Section]:
         for document in self.document_tree.document_list:
-            if len(document.free_texts) > 0:
-                for part in document.free_texts[0].parts:
+            if len(document.get_freetext()) > 0:
+                for part in document.get_freetext()[0].parts:
                     if isinstance(part, Anchor) and part.value == anchor_uid:
                         return document
             document_iterator = DocumentCachingIterator(document)
             for node in document_iterator.all_content():
                 if not isinstance(node, (Document, Section)):
                     continue
-                if len(node.free_texts) > 0:
-                    for part in node.free_texts[0].parts:
+                if len(node.get_freetext()) > 0:
+                    for part in node.get_freetext()[0].parts:
                         if (
                             isinstance(part, Anchor)
                             and part.value == anchor_uid
@@ -414,8 +414,8 @@ class TraceabilityIndex:  # pylint: disable=too-many-public-methods, too-many-in
         #    that case, we need to check if these anchors are used by any LINKs,
         #    raising a validation if they do.
         existing_node_anchor_uids = set()
-        if len(node.free_texts) > 0:
-            for part in node.free_texts[0].parts:
+        if len(node.get_freetext()) > 0:
+            for part in node.get_freetext()[0].parts:
                 if isinstance(part, Anchor):
                     existing_node_anchor_uids.add(part.value)
 
@@ -454,8 +454,8 @@ class TraceabilityIndex:  # pylint: disable=too-many-public-methods, too-many-in
             for node_ in document_iterator.all_content():
                 if not isinstance(node_, (Document, Section)):
                     continue
-                if len(node_.free_texts) > 0:
-                    for part in node_.free_texts[0].parts:
+                if len(node_.get_freetext()) > 0:
+                    for part in node_.get_freetext()[0].parts:
                         if (
                             isinstance(part, InlineLink)
                             and part.link in to_be_removed_anchor_uids

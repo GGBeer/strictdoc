@@ -32,4 +32,8 @@ class FragmentFromFile(Node):  # pylint: disable=too-many-instance-attributes
 
     @property
     def is_section(self):
-        return True
+        return False
+
+    @property
+    def is_freetext(self):
+        return False

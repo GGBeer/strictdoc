@@ -246,6 +246,10 @@ class Requirement(
         return False
 
     @property
+    def is_freetext(self):
+        return False
+
+    @property
     def document(self) -> Document:
         document: Optional[Document] = self.ng_document_reference.get_document()
         assert (
@@ -489,6 +493,10 @@ class CompositeRequirement(Requirement):
     @property
     def is_composite_requirement(self):
         return True
+
+    @property
+    def is_freetext(self):
+        return False
 
     @property
     def document(self):

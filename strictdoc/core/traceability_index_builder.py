@@ -6,6 +6,7 @@ from typing import Dict, Iterator, List, Optional, Set, cast
 
 from strictdoc.backend.sdoc.models.anchor import Anchor
 from strictdoc.backend.sdoc.models.document import Document
+from strictdoc.backend.sdoc.models.free_text import FreeText
 from strictdoc.backend.sdoc.models.inline_link import InlineLink
 from strictdoc.backend.sdoc.models.reference import ParentReqReference
 from strictdoc.backend.sdoc.models.requirement import Requirement
@@ -211,7 +212,7 @@ class TraceabilityIndexBuilder:
 
         document: Document
         for document in document_tree.document_list:
-            for free_text in document.free_texts:
+            for free_text in document.get_freetext():
                 for part in free_text.parts:
                     if isinstance(part, Anchor):
                         assert part.value not in d_11_map_id_to_node
@@ -236,7 +237,7 @@ class TraceabilityIndexBuilder:
                 d_11_map_id_to_node[node.node_id] = node
 
                 if node.is_section:
-                    for free_text in node.free_texts:
+                    for free_text in node.get_freetext():
                         for part in free_text.parts:
                             if isinstance(part, InlineLink):
                                 graph_database.add_node(
@@ -323,23 +324,24 @@ class TraceabilityIndexBuilder:
 
             for node in document_iterator.all_content():
                 if node.is_section:
-                    for free_text in node.free_texts:
-                        for part in free_text.parts:
-                            if isinstance(part, InlineLink):
-                                if (
-                                    part.link not in d_02_requirements_map
-                                    and not graph_database.link_exists(
-                                        link_type=GraphLinkType.ANCHOR_UID_TO_ANCHOR_UUID,  # noqa: E501
-                                        lhs_node=part.link,
-                                    )
-                                ):
-                                    raise StrictDocException(
-                                        "DocumentIndex: "
-                                        "the inline link references an "
-                                        "object with an UID "
-                                        "that does not exist: "
-                                        f"{part.link}."
-                                    )
+                    for item in node.section_contents:
+                        if isinstance(item, FreeText):
+                            for part in item.parts:
+                                if isinstance(part, InlineLink):
+                                    if (
+                                        part.link not in d_02_requirements_map
+                                        and not graph_database.link_exists(
+                                            link_type=GraphLinkType.ANCHOR_UID_TO_ANCHOR_UUID,  # noqa: E501
+                                            lhs_node=part.link,
+                                        )
+                                    ):
+                                        raise StrictDocException(
+                                            "DocumentIndex: "
+                                            "the inline link references an "
+                                            "object with an UID "
+                                            "that does not exist: "
+                                            f"{part.link}."
+                                        )
                 if not node.is_requirement:
                     continue
                 requirement: Requirement = node

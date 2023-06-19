@@ -22,7 +22,6 @@ class Section(Node):  # pylint: disable=too-many-instance-attributes
         custom_level: Optional[str],
         title,
         requirement_prefix: Optional[str],
-        free_texts: List[FreeText],
         section_contents: List[Node],
     ):
         self.parent = parent
@@ -36,8 +35,6 @@ class Section(Node):  # pylint: disable=too-many-instance-attributes
 
         self.title = title
         self.requirement_prefix: Optional[str] = requirement_prefix
-
-        self.free_texts: List[FreeText] = free_texts
         self.section_contents = section_contents
 
         # HEF4
@@ -69,3 +66,26 @@ class Section(Node):  # pylint: disable=too-many-instance-attributes
     @property
     def is_section(self):
         return True
+
+    @property
+    def is_freetext(self):
+        return False
+
+    @property
+    def has_freetext(self) -> bool:
+        for item in self.section_contents:
+            if isinstance(item, FreeText):
+                return True
+        return False
+
+    def get_freetext(self) -> List[FreeText]:
+        freetext: List[FreeText] = []
+        for item in self.section_contents:
+            if isinstance(item, FreeText):
+                freetext.append(item)
+        return freetext
+
+    def add_freetext(self, freetext: Optional[FreeText]):
+        if freetext is None:
+            return
+        self.section_contents.append(freetext)

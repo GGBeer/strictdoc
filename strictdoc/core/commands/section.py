@@ -108,16 +108,16 @@ class UpdateSectionCommand:
         # Updating section content.
         if free_text_container is not None:
             existing_anchor_uids_to_remove = set()
-            if len(section.free_texts) > 0:
-                for part in section.free_texts[0].parts:
+            if len(section.get_freetext()) > 0:
+                for part in section.get_freetext()[0].parts:
                     if isinstance(part, Anchor):
                         existing_anchor_uids_to_remove.add(part.value)
 
-            if len(section.free_texts) > 0:
-                free_text: FreeText = section.free_texts[0]
+            if len(section.get_freetext()) > 0:
+                free_text: FreeText = section.get_freetext()[0]
             else:
                 free_text = FreeText(section, [])
-                section.free_texts.append(free_text)
+                section.add_freetext(free_text)
             free_text.parts = free_text_container.parts
             free_text.parent = section
 
@@ -147,8 +147,6 @@ class UpdateSectionCommand:
                     rhs_node=anchor_uuid,
                 )
                 traceability_index.graph_database.remove_node(uuid=anchor_uuid)
-        else:
-            section.free_texts = []
 
 
 class CreateSectionCommand:
@@ -255,7 +253,6 @@ class CreateSectionCommand:
             custom_level=None,
             title=None,
             requirement_prefix=None,
-            free_texts=[],
             section_contents=[],
         )
         section.node_id = form_object.section_mid
@@ -275,11 +272,11 @@ class CreateSectionCommand:
 
         # Updating section content.
         if free_text_container is not None:
-            if len(section.free_texts) > 0:
-                free_text: FreeText = section.free_texts[0]
+            if len(section.get_freetext()) > 0:
+                free_text: FreeText = section.get_freetext()[0]
             else:
                 free_text = FreeText(section, [])
-                section.free_texts.append(free_text)
+                section.add_freetext(free_text)
             free_text.parts = free_text_container.parts
             free_text.parent = section
             for part in free_text.parts:
@@ -291,7 +288,5 @@ class CreateSectionCommand:
                     part.parent = free_text
                 elif isinstance(part, InlineLink):
                     part.parent = free_text
-        else:
-            section.free_texts = []
 
         self._created_section = section

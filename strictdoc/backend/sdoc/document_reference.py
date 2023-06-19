@@ -1,9 +1,15 @@
-from typing import Optional
+from __future__ import annotations
 
-from strictdoc.backend.sdoc.models.document import Document
+from typing import Optional
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from strictdoc.backend.sdoc.models.document import Document
 
 
 class DocumentReference:
+    _document: Document | None
+
     def __init__(self):
         self._document: Optional[Document] = None
 

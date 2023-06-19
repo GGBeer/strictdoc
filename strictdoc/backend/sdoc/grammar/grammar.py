@@ -38,7 +38,6 @@ Document[noskipws]:
   'TITLE: ' title = SingleLineString '\n'
   (config = DocumentConfig)?
   ('\n' grammar = DocumentGrammar)?
-  free_texts *= SpaceThenFreeText
   section_contents *= SectionOrRequirement
 ;
 
@@ -160,7 +159,6 @@ Section[noskipws]:
   ('LEVEL: ' custom_level = SingleLineString '\n')?
   'TITLE: ' title = SingleLineString '\n'
   ('REQ_PREFIX: ' requirement_prefix = SingleLineString '\n')?
-  free_texts *= SpaceThenFreeText
   section_contents *= SectionOrRequirement
   '\n'
   '[/SECTION]'
@@ -168,7 +166,8 @@ Section[noskipws]:
 ;
 
 SectionOrRequirement[noskipws]:
-  '\n' (Section | Requirement | CompositeRequirement | FragmentFromFile)
+  '\n' (Section | Requirement | CompositeRequirement | FreeText |
+FragmentFromFile)
 ;
 
 FragmentFromFile[noskipws]:
@@ -239,6 +238,7 @@ RequirementStatus[noskipws]:
 
 FreeText[noskipws]:
   '[FREETEXT]' '\n'
+  ('UID: ' uid = SingleLineString '\n')?
   parts*=TextPart
   FreeTextEnd
 ;
